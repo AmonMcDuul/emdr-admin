@@ -5,7 +5,7 @@ import { Environment } from '../../environment/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class SignalrService {
+export class SignalRService {
   private hubConnection: HubConnection | null = null;
   private hubUrl = Environment.baseUrl + '/sessionHub';
 
