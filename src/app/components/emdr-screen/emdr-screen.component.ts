@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { EmdrService } from '../../services/emdr.service';
 
 @Component({
   selector: 'app-emdr-screen',
@@ -9,45 +10,30 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './emdr-screen.component.scss'
 })
 export class EmdrScreenComponent {
-  ballPosition: number = 0; 
-  direction: number = 1; // 1 for right, -1 for left
-  containerWidth: number = 640;
-  ballSize: number = 30;
-  speed: number = 5; 
+  ballPosition: number = 0;
+  speed: number = 5;
 
-  private intervalId: any;
+  constructor(private emdrService: EmdrService) {}
+
+  ngOnInit(): void {
+    this.emdrService.onPositionUpdate((position: number) => {
+      this.ballPosition = position;
+    });
+  }
 
   start(): void {
-    if (!this.intervalId) {
-      this.intervalId = setInterval(() => {
-        this.moveBall();
-      }, 20);
-    }
+    this.emdrService.start();
   }
 
   pause(): void {
-    clearInterval(this.intervalId);
-    this.intervalId = null;
+    this.emdrService.pause();
   }
 
   stop(): void {
-    this.pause();
-    this.ballPosition = 0;
-    this.direction = 1;
-  }
-
-  private moveBall(): void {
-    this.ballPosition += this.direction * this.speed;
-
-    if (this.ballPosition >= this.containerWidth - this.ballSize) {
-      this.direction = -1;
-    } else if (this.ballPosition <= 0) {
-      this.direction = 1;
-    }
+    this.emdrService.stop();
   }
 
   updateSpeed(): void {
-    this.pause();
-    this.start();
+    this.emdrService.setSpeed(this.speed);
   }
 }
