@@ -11,10 +11,7 @@ import { EmdrScreenComponent } from "../../components/emdr-screen/emdr-screen.co
 export class HomeComponent {
 
     constructor(private signalRService: SignalRService){
-      signalRService.connect()
-    }
-
-    startEmdr(){
-
+      signalRService.connect();
+      signalRService.joinSession("1");
     }
 }

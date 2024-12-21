@@ -1,0 +1,1 @@
+export type EmdrState = 'start' | 'pause' | 'stop';

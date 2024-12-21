@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { Environment } from '../../environment/environment';
+import { EmdrState } from '../models/emdr-state.model';
+import { EmdrService } from './emdr.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +13,7 @@ export class SignalRService {
 
   private connectionPromise: Promise<void> | null = null;
 
-  constructor() {}
+  constructor(private emdrService: EmdrService) {}
 
   connect(): void {
     if (this.hubConnection?.state === HubConnectionState.Connected) {
@@ -42,8 +44,24 @@ export class SignalRService {
       return;
     }
 
-    this.hubConnection.on('ReceiveTest', (sessionId: string, a: number, b: number) => {
-      console.log(a, b)
+    this.hubConnection.on('RecieveEmdrState', (state: EmdrState) => {
+      switch(state){
+        case 'start': {
+          this.emdrService.start()
+          break;
+        }
+        case 'pause': {
+          this.emdrService.pause()
+          break;
+        }
+        case 'stop': {
+          this.emdrService.stop()
+          break;
+        }
+        default: {
+          break;
+        }
+      }
     });
   }
   
@@ -61,6 +79,20 @@ export class SignalRService {
     .then(() => this.disconnect())
     .catch((err) => {
       console.error(`Error leaving Session ${sessionId}:`, err);
+    });
+  }
+
+  async setEmdrState(sessionId: string, state: EmdrState) {
+    await this.ensureConnected();
+    this.hubConnection?.invoke('SetEmdrState', sessionId, state).catch((err) => {
+      console.error(`Error setting emdr state ${sessionId}:`, err);
+    });
+  }
+
+  async setSpeed(sessionId: string, speed: number) {
+    await this.ensureConnected();
+    this.hubConnection?.invoke('SetSpeed', sessionId, speed).catch((err) => {
+      console.error(`Error setting speed ${sessionId}:`, err);
     });
   }
 
