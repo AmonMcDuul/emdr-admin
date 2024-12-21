@@ -15,6 +15,7 @@ export class EmdrScreenComponent {
   ballPosition: number = 0;
   speed: number = 5;
   soundEnabled: boolean = false;
+  distractionEnabled: boolean = false;
 
   constructor(private signalRService: SignalRService, private emdrService: EmdrService) {}
 
@@ -37,6 +38,12 @@ export class EmdrScreenComponent {
   }
 
   enableSound(): void {
-    this.emdrService.enableSound(this.soundEnabled);
+    // this.emdrService.enableSound(this.soundEnabled);
+    this.signalRService.toggleSound("1", this.soundEnabled);
+  }
+
+  toggleDistraction(): void {
+    this.distractionEnabled = !this.distractionEnabled;
+    this.signalRService.toggleDistraction("1", this.distractionEnabled)
   }
 }

@@ -96,6 +96,20 @@ export class SignalRService {
     });
   }
 
+  async toggleSound(sessionId: string, enableSound: boolean) {
+    await this.ensureConnected();
+    this.hubConnection?.invoke('ToggleSound', sessionId, enableSound).catch((err) => {
+      console.error(`Error toggling sound ${sessionId}:`, err);
+    });
+  }
+
+  async toggleDistraction(sessionId: string, enableDistraction: boolean) {
+    await this.ensureConnected();
+    this.hubConnection?.invoke('ToggleDistraction', sessionId, enableDistraction).catch((err) => {
+      console.error(`Error toggling Distraction ${sessionId}:`, err);
+    });
+  }
+
   private async ensureConnected(): Promise<void> {
     if (this.hubConnection?.state === HubConnectionState.Connected) {
       return; 
