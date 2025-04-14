@@ -8,35 +8,48 @@ import { EmdrService } from './emdr.service';
   providedIn: 'root',
 })
 export class SignalRService {
-  private hubConnection: HubConnection | null = null;
+  private hubConnection!: HubConnection;
   private hubUrl = Environment.baseUrl + '/sessionHub';
-
   private connectionPromise: Promise<void> | null = null;
+  private isExplicitlyDisconnected = false;
 
-  constructor(private emdrService: EmdrService) {}
+  constructor(private emdrService: EmdrService) {
+    this.initializeConnection();
+  }
 
-  connect(): void {
-    if (this.hubConnection?.state === HubConnectionState.Connected) {
-      return; 
-    }
-
+  private initializeConnection(): void {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl)
-      .withAutomaticReconnect()
+      .withAutomaticReconnect({
+        nextRetryDelayInMilliseconds: retryContext => {
+          if (retryContext.elapsedMilliseconds < 60000) {
+            return Math.random() * 2000 + 2000; // 2-4 seconds
+          }
+          return null; // Stop trying
+        }
+      })
       .build();
 
-    this.connectionPromise = this.hubConnection
-      .start()
-      .then(() => {
-        console.log('SignalR connected');
-        this.connectionPromise = null; 
-      })
-      .catch((err) => {
-        console.error('SignalR connection error:', err);
-        this.connectionPromise = null; 
-      });
-
     this.registerListeners();
+  }
+
+  async connect(): Promise<void> {
+    if (this.hubConnection.state === HubConnectionState.Connected) {
+      return;
+    }
+
+    this.isExplicitlyDisconnected = false;
+
+    try {
+      this.connectionPromise = this.hubConnection.start();
+      await this.connectionPromise;
+      console.log('SignalR connected');
+    } catch (err) {
+      console.error('SignalR connection error:', err);
+      throw err;
+    } finally {
+      this.connectionPromise = null;
+    }
   }
 
   private registerListeners(): void {

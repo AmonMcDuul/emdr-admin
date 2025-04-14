@@ -1,35 +1,337 @@
-.main-container {
-    background-color: black;
-    width: 640px;
-    height: 420px;
-    overflow: hidden;
-    position: relative;
-  }
-  
-.ball {
-  width: 30px;
-  height: 30px;
-  background-color: white;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+$primary-color: #4a6fa5;
+$secondary-color: #166088;
+$accent-color: #4fc3f7;
+$background-dark: #0a192f;
+$background-light: #172a45;
+$text-color: #e6f1ff;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$danger-color: #f44336;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.controls {
+.emdr-container {
+  font-family: 'Poppins', sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: $background-dark;
+  color: $text-color;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.emdr-header {
+  text-align: center;
+  margin-bottom: 20px;
+  
+  h1 {
+    color: $accent-color;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  .session-info {
+    color: rgba($text-color, 0.7);
+    font-size: 0.9rem;
+  }
+}
+
+.emdr-visualization {
+  position: relative;
+  height: 300px;
+  background-color: $background-light;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+  
+  .track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba($accent-color, 0.5), transparent);
+    transform: translateY(-50%);
+  }
+  
+  .ball {
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 30% 30%, white, $accent-color);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 15px $accent-color;
+    z-index: 10;
+    transition: transform 0.1s linear;
+  }
+  
+  .distraction-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+  
+  .distraction {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: rgba($text-color, 0.3);
+    border-radius: 50%;
+    animation: float 15s infinite linear;
+    
+    @for $i from 1 through 20 {
+      &:nth-child(#{$i}) {
+        top: random(100) * 1%;
+        left: random(100) * 1%;
+        animation-delay: random(20) * -1s;
+        animation-duration: 10 + random(20) * 1s;
+        opacity: 0.2 + random(8) * 0.1;
+      }
+    }
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate(random(200) - 100 + px, random(200) - 100 + px) rotate(360deg);
+  }
+}
+
+.emdr-controls {
+  background-color: $background-light;
+  padding: 20px;
+  border-radius: 10px;
+  
+  .control-group {
+    margin-bottom: 20px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    h3 {
+      color: $accent-color;
+      margin-bottom: 10px;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .control-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    i {
+      font-size: 0.9rem;
+    }
+    
+    &.start {
+      background-color: $success-color;
+      color: white;
+      
+      &:hover {
+        background-color: darken($success-color, 10%);
+      }
+    }
+    
+    &.pause {
+      background-color: $warning-color;
+      color: white;
+      
+      &:hover {
+        background-color: darken($warning-color, 10%);
+      }
+    }
+    
+    &.stop {
+      background-color: $danger-color;
+      color: white;
+      
+      &:hover {
+        background-color: darken($danger-color, 10%);
+      }
+    }
+  }
+  
+  .slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    .speed-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 8px;
+      background: rgba($text-color, 0.2);
+      border-radius: 4px;
+      outline: none;
+      
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: $accent-color;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      
+      &:hover::-webkit-slider-thumb {
+        transform: scale(1.1);
+        box-shadow: 0 0 5px $accent-color;
+      }
+    }
+    
+    .speed-value {
+      min-width: 20px;
+      text-align: center;
+    }
+    
+    .save-btn {
+      padding: 8px 15px;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+  
+  .toggle-group {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    
+    input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: relative;
+      width: 50px;
+      height: 24px;
+      background-color: rgba($text-color, 0.2);
+      border-radius: 12px;
+      transition: background-color 0.3s;
+      margin-right: 10px;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s;
+      }
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: $accent-color;
+      
+      &::before {
+        transform: translateX(26px);
+      }
+    }
+    
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+}
+
+.math-distraction {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+  
+  .math-question {
+    display: inline-block;
+    background-color: rgba($accent-color, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    animation: mathFade 5s ease-in-out;
+  }
+}
+
+@keyframes mathFade {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+.distraction-mode-selector {
   margin-top: 10px;
   display: flex;
-  gap: 10px;
-  align-items: center;
-
-  button {
-    padding: 5px 10px;
+  gap: 15px;
+  
+  label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     cursor: pointer;
   }
-
-  input {
-    width: 60px;
-    margin-left: 5px;
+  
+  input[type="radio"] {
+    margin-right: 5px;
   }
 }
-  
