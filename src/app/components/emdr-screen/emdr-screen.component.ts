@@ -64,13 +64,14 @@ export class EmdrScreenComponent implements OnDestroy {
   toggleDistraction(): void {
     this.distractionEnabled = !this.distractionEnabled;
     this.emdrService.enableDistraction(this.distractionEnabled, this.distractionMode);
-    this.signalRService.toggleDistraction(this.sessionId, this.distractionEnabled);
+    this.signalRService.toggleDistraction(this.sessionId, this.distractionEnabled, this.distractionMode);
   }
 
   changeDistractionMode(mode: 'dots' | 'math'): void {
     this.distractionMode = mode;
     if (this.distractionEnabled) {
       this.emdrService.enableDistraction(true, mode);
+      this.signalRService.toggleDistraction(this.sessionId, this.distractionEnabled, this.distractionMode);
     }
   }
 

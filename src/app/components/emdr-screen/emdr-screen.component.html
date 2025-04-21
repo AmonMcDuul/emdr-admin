@@ -39,7 +39,7 @@
     <div class="control-group">
       <h3>Speed Settings</h3>
       <div class="slider-container">
-        <input type="range" min="1" max="30" [(ngModel)]="speed" 
+        <input type="range" min="1" max="100" [(ngModel)]="speed" 
                (input)="updateSpeed()" class="speed-slider">
         <span class="speed-value">{{speed}}</span>
         <button class="save-btn" (click)="sendSpeed()">

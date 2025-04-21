@@ -99,7 +99,7 @@ export class EmdrService {
   }
 
   setSpeed(newSpeed: number): void {
-    this.speed = Math.max(1, Math.min(20, newSpeed));
+    this.speed = newSpeed;
   }
 
   setContainerWidth(width: number): void {

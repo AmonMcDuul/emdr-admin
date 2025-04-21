@@ -116,9 +116,9 @@ export class SignalRService {
     });
   }
 
-  async toggleDistraction(sessionId: string, enableDistraction: boolean) {
+  async toggleDistraction(sessionId: string, enableDistraction: boolean, distractionMode: string) {
     await this.ensureConnected();
-    this.hubConnection?.invoke('ToggleDistraction', sessionId, enableDistraction).catch((err) => {
+    this.hubConnection?.invoke('ToggleDistraction', sessionId, enableDistraction, distractionMode).catch((err) => {
       console.error(`Error toggling Distraction ${sessionId}:`, err);
     });
   }
